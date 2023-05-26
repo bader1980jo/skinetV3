@@ -30,9 +30,10 @@ namespace API.Controllers
             _typeRepository = typeRepository;
         }
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProductsAsync()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProductsAsync(
+            string sort, int? brandId, int? typeId)
         {
-            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var spec = new ProductsWithTypesAndBrandsSpecification(sort, brandId, typeId);
 
             var products = await _productRepository.ListAsync(spec);
 
