@@ -31,20 +31,19 @@ namespace API.Controllers
             _typeRepository = typeRepository;
         }
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Pagination<ProductToReturnDto>>>> GetProductsAsync(
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts(
             [FromQuery] ProductSpecParams productParams)
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
-            var countSpec = new ProductsWithTypesAndBrandsSpecification(productParams);
+            var countSpec = new ProductWithFiltersForCountSpecifications(productParams);
+
             var totalItems = await _productRepository.CountAsync(countSpec);
-
             var products = await _productRepository.ListAsync(spec);
-            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
 
-            
+            var data = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
 
-            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.PageSize,
-                totalItems,data));
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex,
+                productParams.PageSize, totalItems, data));
         }
 
         [HttpGet("{id}")]
